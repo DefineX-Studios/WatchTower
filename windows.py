@@ -37,28 +37,50 @@ def get_disk_usage():
 def get_gpu_usage():
     #  wmic path Win32_VideoController get Name | findstr "NVIDIA"
     all_gpus = []
+    nvidia_gpus = []
+    amd_gpus = []
 
     command = 'wmic path Win32_VideoController get Name'
     result = subprocess.run(command, capture_output=True, text=True)
     if result.returncode == 0:
         output = result.stdout.strip().split('\n')
+        # list comprehension
         nvidia_gpus = [line.strip() for line in output if 'NVIDIA' in line]
         amd_gpus = [line.strip() for line in output if 'AMD' in line]
-
-        all_gpus = [nvidia_gpus, amd_gpus]
     else:
         error_message = result.stderr.strip()
         print(f"Command execution failed with error: {error_message}")
 
-    return all_gpus
+    if nvidia_gpus:
+        # Command to retrieve NVIDIA GPU information
+        command = "nvidia-smi --query-gpu=index,memory.total,memory.used," \
+                  "temperature.gpu,power.draw --format=csv,noheader"
 
-# # Usage example
-# cpu_usage = get_cpu_usage()
-# ram_usage = get_ram_usage()
-# disk_usage = get_disk_usage()
-# # gpu_usage = get_gpu_usage()
-#
-# print(f"CPU Usage: {cpu_usage}%")
-# print(f"RAM Usage: {ram_usage}%")
-# print(f"Disk Usage: {disk_usage}%")
-# print(f"GPU Usage: {gpu_usage}%")
+        # Execute the command and capture the output
+        result = subprocess.run(command, capture_output=True, text=True)
+
+        if result.returncode == 0:
+            output = result.stdout.strip().split("\n")
+
+            for line in output:
+                n_gpu_info = line.split(", ")
+                all_gpus.append(n_gpu_info)
+        else:
+            error_message = result.stderr.strip()
+            print(f"Command execution failed with error: {error_message}")
+
+    if amd_gpus:
+        command = "rocm-smi --showmeminfo --showtemp --showpower"
+        result = subprocess.run(command, capture_output=True, text=True)
+
+        if result.returncode == 0:
+            output = result.stdout.strip().split("\n")
+
+            for line in output:
+                a_gpu_info = line.split(":")
+                all_gpus.append(a_gpu_info)
+        else:
+            error_message = result.stderr.strip()
+            print(f"Command execution failed with error: {error_message}")
+
+    return all_gpus

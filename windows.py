@@ -17,7 +17,7 @@ def get_ram_usage():
 
     result = subprocess.run(['wmic', 'COMPUTERSYSTEM', 'get', 'TotalPhysicalMemory'], capture_output=True, text=True)
     total = result.stdout.split()
-    total[1] = ((int(total[1])/1024)/1024).__round__(2)
+    total[1] = ((int(total[1]) / 1024) / 1024).__round__(2)
 
     available.append('Available Memory')
     available.append((total[1] - free[1]).__round__(2))
@@ -84,3 +84,24 @@ def get_gpu_usage():
             print(f"Command execution failed with error: {error_message}")
 
     return all_gpus
+
+
+def list_processes():
+    columns = []
+    command = "tasklist"
+    output = []
+    result = subprocess.run(command, capture_output=True, text=True)
+    # split
+    output = result.stdout.split("\n")
+    # let's get rid of the first two lines as they are just header
+    output = output[4:]
+    process_dict = {}
+
+    # Iterate over the processes and store them in the dictionary
+    for process in output:
+        # Split the process information into individual columns
+        columns = process.split()
+        if columns:
+            process_dict[columns[1]] = (columns[0],columns[4])
+
+    return process_dict

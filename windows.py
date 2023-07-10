@@ -7,10 +7,10 @@ def get_cpu_usage():
     result = subprocess.run(['wmic', 'cpu', 'get', 'loadpercentage'], capture_output=True, text=True)
     if result.returncode == 0:
         cpu_stat = result.stdout.split()
-        if cpu_stat:
+        if len(cpu_stat) > 1:
             output[cpu_stat[0]] = (cpu_stat[1])
         else:
-            output['LoadPercentage'] = 'NA'
+            output['LoadPercentage'] = -1
     else:
         error_message = result.stderr.strip()
         print(f"Command execution failed with error in the function :{__name__} {error_message}")

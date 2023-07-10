@@ -1,0 +1,9 @@
+{
+    "Server1": {
+        "user" : "demo",
+        "port": 22,
+        "ip": "192.168.1.1",
+        "password": "password",
+        "identity" : "path to identity files"
+    }
+}

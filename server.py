@@ -4,7 +4,7 @@ import paramiko
 
 def read_from_json():
     # Open the JSON file
-    with open('server.conf', 'r') as file:
+    with open('server.json', 'r') as file:
         # Load the JSON data
         data = json.load(file)
         return data

@@ -2,36 +2,67 @@ import subprocess
 
 
 def get_cpu_usage():
+    output = {}
+    cpu_stat = []
     result = subprocess.run(['wmic', 'cpu', 'get', 'loadpercentage'], capture_output=True, text=True)
-    output = result.stdout.split()
+    if result.returncode == 0:
+        cpu_stat = result.stdout.split()
+        if cpu_stat:
+            output[cpu_stat[0]] = (cpu_stat[1])
+        else:
+            output['LoadPercentage'] = 'NA'
+    else:
+        error_message = result.stderr.strip()
+        print(f"Command execution failed with error in the function :{__name__} {error_message}")
 
     return output
 
 
 def get_ram_usage():
     available = []
+    total = []
+    free = []
+    memory = {}
 
     result = subprocess.run(['wmic', 'OS', 'get', 'FreePhysicalMemory'], capture_output=True, text=True)
-    free = result.stdout.split()
-    free[1] = (int(free[1]) / 1024).__round__(2)
+    if result.returncode == 0:
+        free = result.stdout.split()
+        memory[free[0]] = ((int(free[1]) / 1024).__round__(2))
+    else:
+        error_message = result.stderr.strip()
+        print(f"Command execution failed with error in the function :{__name__} {error_message}")
 
     result = subprocess.run(['wmic', 'COMPUTERSYSTEM', 'get', 'TotalPhysicalMemory'], capture_output=True, text=True)
-    total = result.stdout.split()
-    total[1] = ((int(total[1]) / 1024) / 1024).__round__(2)
+    if result.returncode == 0:
+        total = result.stdout.split()
+        memory[total[0]] = ((int(total[1]) / 1024).__round__())
+    else:
+        error_message = result.stderr.strip()
+        print(f"Command execution failed with error in the function :{__name__} {error_message}")
 
-    available.append('Available Memory')
-    available.append((total[1] - free[1]).__round__(2))
-
-    memory = [total, free, available]
+    if total and free:
+        memory['Available Memory'] = ((int(total[1]) - int(free[1])).__round__())
+    else:
+        error_message = 'Cannot calculate memory size'
+        print(f"Command execution failed with error in the function :{__name__} {error_message}")
 
     return memory
 
 
 def get_disk_usage():
-    # wmic logicaldisk get FreeSpace,Size,Name
-    result = subprocess.run(['wmic', 'logicaldisk', 'get', 'FreeSpace,Size,Name'], capture_output=True, text=True)
-    output = result.stdout.split()
-    return output
+    output = {}
+    disks = []
+    disk = {}
+    result = subprocess.run(['wmic', 'logicaldisk', 'get', 'Name,FreeSpace,Size'], capture_output=True, text=True)
+    disks = result.stdout.split()
+    disks = disks[1:]
+
+    for i in range(0, len(disks), 3):
+        if i != 0:
+            disk[disks[i]] = ()
+            disk[disks[i]] = (disks[i+1], disks[i-1])
+
+    return disk
 
 
 def get_gpu_usage():

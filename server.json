@@ -1,20 +1,20 @@
 {
     "Server1": {
-        "user" : "demo",
+        "user" : "other",
         "port": 22,
-        "ip": "192.168.1.1",
-        "password": "password",
+        "ip": "",
+        "password": "",
         "identity" : "path to identity files",
         "commands" : {
             "app_name" : "command"
         },
         "monitoring_processes" : {
-            "p1" : "p2_name",
-            "p2" :  "p2_name"
+            "p1" : "Anydesk.exe",
+            "p2" :  "GHelper.exe"
         },
         "monitoring_services" : {
-            "s1" : "s1_name",
-            "s2" :  "s2_name"
+            "s1" : "Anydesk",
+            "s2" :  "Parsec"
         }
     }
 }

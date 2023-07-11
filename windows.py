@@ -15,7 +15,7 @@ def get_cpu_usage():
         cpu_info.append(cpu.LoadPercentage)
         cpu_info.append(cpu.VirtualizationFirmwareEnabled)
 
-    return cpu_info
+    return tuple(cpu_info)
 
 
 def get_ram_usage():

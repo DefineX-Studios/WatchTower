@@ -152,7 +152,8 @@ def get_service_status(service_name):
             service_info.append(service.State)
             service_info.append(service.Status)
     else:
-        print("Service not found")
+        error_message = f"Service not found ->{service_name}"
+        print(f"Command execution failed with error: {error_message}")
 
     del service_name
     return tuple(service_info)

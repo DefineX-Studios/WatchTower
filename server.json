@@ -11,6 +11,10 @@
         "monitoring_processes" : {
             "p1" : "p2_name",
             "p2" :  "p2_name"
+        },
+        "monitoring_services" : {
+            "s1" : "s1_name",
+            "s2" :  "s2_name"
         }
     }
 }

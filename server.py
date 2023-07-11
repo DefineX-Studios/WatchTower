@@ -7,7 +7,8 @@ def read_from_json():
     with open('server.json', 'r') as file:
         # Load the JSON data
         data = json.load(file)
-        return data
+
+    return data
 
 
 def connect_to_server(server_data):

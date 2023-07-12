@@ -161,14 +161,20 @@ def get_service_status(service_name):
 
 def get_process_info(process_name):
     c = wmi.WMI()
-    process = []
-    for s in c.Win32_Process(Name=process_name):
-        if s:
-            process.append(s.ProcessId)
-        else:
-            error_message = f"Process not found ==> {process_name}"
-            print(f"Command execution failed with error: {error_message}")
-    return tuple(process)
+    processes = []
+
+    p = c.Win32_Process(Name=process_name)
+
+    if p:
+        for process in p:
+            processes.append(process.ProcessId)
+    else:
+        error_message = f"Process not found ==> {process_name}"
+        print(f"Command execution failed with error: {error_message}")
+
+    c = None
+    process_name = None
+    return tuple(processes)
 
 
 def test_command_line(command):

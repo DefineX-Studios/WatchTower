@@ -27,7 +27,7 @@ def get_ram_usage():
     result = subprocess.run(['wmic', 'OS', 'get', 'FreePhysicalMemory'], capture_output=True, text=True)
     if result.returncode == 0:
         free = result.stdout.split()
-        memory[free[0]] = ((int(free[1]) / 1024).__round__(2))
+        memory["free"] = ((int(free[1]) / 1024).__round__())
     else:
         error_message = result.stderr.strip()
         print(f"Command execution failed with error in the function :{__name__} {error_message}")
@@ -35,13 +35,14 @@ def get_ram_usage():
     result = subprocess.run(['wmic', 'COMPUTERSYSTEM', 'get', 'TotalPhysicalMemory'], capture_output=True, text=True)
     if result.returncode == 0:
         total = result.stdout.split()
-        memory[total[0]] = ((int(total[1]) / 1024).__round__())
+        memory["total"] = ((int(total[1]) / 1024) / 1024).__round__()
     else:
         error_message = result.stderr.strip()
         print(f"Command execution failed with error in the function :{__name__} {error_message}")
 
     if total and free:
-        memory['Available Memory'] = ((int(total[1]) - int(free[1])).__round__())
+        memory["used"] = (memory["total"] - memory["free"])
+        memory["percent"] = ((memory["used"] / memory["total"])*100).__round__()
     else:
         error_message = 'Cannot calculate memory size'
         print(f"Command execution failed with error in the function :{__name__} {error_message}")

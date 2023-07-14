@@ -4,6 +4,7 @@ import mail
 
 if __name__ == '__main__':
     service_status = {}
+    files_to_log = {}
     process_status = {}
     dead_processes = ""
     dead_services = ""
@@ -37,5 +38,14 @@ if __name__ == '__main__':
     print(process_status)
     print(service_status)
 
+    if cpu_usage:
+        files_to_log['cpu_load'] = cpu_usage['load']
 
+    if ram_usage:
+        files_to_log['ram_used'] = ram_usage['percent']
 
+    if disk_usage:
+        for driver_letter, drive_info in disk_usage.items():
+            files_to_log[driver_letter] = ((int(drive_info[1])/1024)/1024/1024).__round__(2)
+
+    print(files_to_log)

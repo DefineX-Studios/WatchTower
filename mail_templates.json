@@ -1,3 +1,6 @@
 {
-
+  "process_subject" : "watchTower has detected that process(es) are down.",
+  "process_message" : "watchTower has detected that the following process(es) are down. Please respond quickly. Here are the details. \nProcess(es) Name: \n",
+  "service_subject" : "watchTower has detected that service(es) are down.",
+  "service_message" : "watchTower has detected that the following service(es) are down. Please respond quickly. Here are the details. \nService(es) Name: \n"
 }

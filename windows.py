@@ -3,19 +3,19 @@ import wmi
 
 
 def get_cpu_usage():
-    cpu_info = []
+    cpu_info = {}
     c = wmi.WMI()
     # Query CPU information
     cpu_data = c.Win32_Processor()
 
     # Print CPU details
     for cpu in cpu_data:
-        cpu_info.append(cpu.Name)
-        cpu_info.append(cpu.NumberOfLogicalProcessors)
-        cpu_info.append(cpu.LoadPercentage)
-        cpu_info.append(cpu.VirtualizationFirmwareEnabled)
+        cpu_info["name"] = cpu.Name
+        cpu_info["cores"] = cpu.NumberOfLogicalProcessors
+        cpu_info["load"] = cpu.LoadPercentage
+        cpu_info["vtx"] = cpu.VirtualizationFirmwareEnabled
 
-    return tuple(cpu_info)
+    return cpu_info
 
 
 def get_ram_usage():

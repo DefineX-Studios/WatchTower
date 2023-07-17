@@ -3,3 +3,4 @@
 __pycache__/
 server.json
 mail_config.json
+history.json

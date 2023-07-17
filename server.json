@@ -16,5 +16,6 @@
             "s1" : "Anydesk",
             "s2" :  "Parsec"
         }
-    }
+    },
+    "polling_rate": 1
 }

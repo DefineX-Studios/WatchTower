@@ -1,6 +1,7 @@
 import json
 import paramiko
 import os
+import logging
 
 
 def read_from_json(json_name):
@@ -50,3 +51,8 @@ def connect_to_server(server_data):
         return client
 
 
+def export_to_json(data, file_path):
+    # Create the file if it doesn't exist
+    with open(file_path, 'w') as file:
+        # Export the data to JSON format
+        json.dump(data, file, indent=4)

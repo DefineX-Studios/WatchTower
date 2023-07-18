@@ -25,6 +25,9 @@ smtp_password = mail_data['smtp_password']
 
 def send_mail(name='', call_type=''):
 
+    if not mail_data:
+        return ()
+
     if name:
         if call_type == "process":
             subject = mail_lang['process_subject']

@@ -1,6 +1,6 @@
 import subprocess
 import wmi
-
+import server
 
 def get_cpu_usage():
     cpu_info = {}
@@ -140,45 +140,55 @@ def list_processes():
 
 
 def get_service_status(service_name):
-    service_info = {}
-    c = wmi.WMI()
-    services = c.Win32_Service(Name=service_name)
 
-    if services:
-        for service in services:
-            service_info = {
-                'Name': service.Name,
-                'PathName': service.PathName,
-                'ProcessId': service.ProcessId,
-                'StartMode' : service.StartMode,
-                'State': service.State,
-                'Status': service.Status
-            }
+    if service_name:
+        service_info = {}
+        c = wmi.WMI()
+        services = c.Win32_Service(Name=service_name)
 
+        if services:
+            for service in services:
+                service_info = {
+                    'Name': service.Name,
+                    'PathName': service.PathName,
+                    'ProcessId': service.ProcessId,
+                    'StartMode' : service.StartMode,
+                    'State': service.State,
+                    'Status': service.Status
+                }
+            return tuple(service_info)
+        else:
+            error_message = f"Service not found ==> {service_name}"
+            print(f"Command execution failed with error: {error_message}")
     else:
-        error_message = f"Service not found ==> {service_name}"
+        error_message = "No Service name set."
         print(f"Command execution failed with error: {error_message}")
 
     del service_name
-    return tuple(service_info)
 
 
 def get_process_info(process_name):
-    c = wmi.WMI()
-    processes = []
+    if process_name:
+        c = wmi.WMI()
+        processes = []
 
-    p = c.Win32_Process(Name=process_name)
+        p = c.Win32_Process(Name=process_name)
 
-    if p:
-        for process in p:
-            processes.append(process.ProcessId)
+        if p:
+            for process in p:
+                processes.append(process.ProcessId)
+        else:
+            error_message = f"Process not found ==> {process_name}"
+            print(f"Command execution failed with error: {error_message}")
+
+        return tuple(processes)
+
     else:
-        error_message = f"Process not found ==> {process_name}"
+        error_message = "No Process name set."
         print(f"Command execution failed with error: {error_message}")
 
     c = None
     process_name = None
-    return tuple(processes)
 
 
 def test_command_line(command):

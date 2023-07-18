@@ -11,6 +11,7 @@ if __name__ == '__main__':
     process_status = {}
     dead_processes = ""
     dead_services = ""
+    live_data = []
 
     if sys.platform.startswith('win'):
         # Import modules for Windows
@@ -29,6 +30,11 @@ if __name__ == '__main__':
     disk_usage = module.get_disk_usage()
     commands_list = module.list_processes()
     server_json = server.read_from_json('server.json')
+
+    live_data.append(cpu_usage)
+    live_data.append(ram_usage)
+    live_data.append(disk_usage)
+    live_data.append(commands_list)
 
     for key, value in server_json.items():
         if key != "polling_rate":
@@ -59,3 +65,4 @@ if __name__ == '__main__':
             history[current_timestamp][driver_letter] = (drive_info[1])
 
     server.write_from_json(history, "history")
+    server.export_to_json(live_data, 'live.json')

@@ -56,41 +56,50 @@ def list_processes():
     return processes
 
 
-def get_running_services(service_name='cron.service'):
-    # Run the command and capture its output
-    command = f'systemctl --type=service --state=running | grep {service_name}'
-    result = subprocess.run(command, shell=True, capture_output=True, text=True)
+def get_service_status(service_name=''):
 
-    # Parse the output and extract service information
-    services = []
-    lines = result.stdout.strip().split('\n')
-    for line in lines:
-        fields = line.split()
-        if fields:
-            service_info = {
-                'Name': fields[0],
-                'PathName': ' '.join(fields[4:]),
-                'ProcessId': None,
-                'StartMode': fields[1],
-                'State': fields[3],
-                'Status': fields[2]
-            }
+    if service_name:
+        # Run the command and capture its output
+        command = f'systemctl --type=service --state=running | grep {service_name}'
+        result = subprocess.run(command, shell=True, capture_output=True, text=True)
 
-            services.append(service_info)
+        # Parse the output and extract service information
+        services = []
+        lines = result.stdout.strip().split('\n')
+        for line in lines:
+            fields = line.split()
+            if fields:
+                service_info = {
+                    'Name': fields[0],
+                    'PathName': ' '.join(fields[4:]),
+                    'ProcessId': None,
+                    'StartMode': fields[1],
+                    'State': fields[3],
+                    'Status': fields[2]
+                }
 
-    return services
+                services.append(service_info)
+                return services
+
+    else:
+        error_message = "No Service name set."
+        print(f"Command execution failed with error: {error_message}")
 
 
 def get_process_info(process_name):
-    # Run the command and capture its output
-    command = f"pgrep -f {process_name}"
-    result = subprocess.run(command, shell=True, capture_output=True, text=True)
+    if process_name:
+        # Run the command and capture its output
+        command = f"pgrep -f {process_name}"
+        result = subprocess.run(command, shell=True, capture_output=True, text=True)
 
-    # Check if the command was successful and retrieve the process ID(s)
-    if result.returncode == 0:
-        process_ids = tuple(int(pid) for pid in result.stdout.strip().split('\n'))
-        return process_ids
+        # Check if the command was successful and retrieve the process ID(s)
+        if result.returncode == 0:
+            process_ids = tuple(int(pid) for pid in result.stdout.strip().split('\n'))
+            return process_ids
 
-    # Return an empty tuple if no process IDs were found
-    return ()
+        # Return an empty tuple if no process IDs were found
+        return ()
+    else:
+        error_message = "No Process name set."
+        print(f"Command execution failed with error: {error_message}")
 

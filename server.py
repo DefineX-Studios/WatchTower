@@ -34,21 +34,30 @@ def write_from_json(data, file_name):
             file.write(json_data)
 
 
-def connect_to_server(server_data):
-    client = []
-    for key, value in server_data.items():
+def ssh_transfer_files(hostname, port, username, password, local_path, remote_path, identity_key=None):
+    # Create an SSH client
+    ssh_client = paramiko.SSHClient()
+    ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 
-        ip = value['ip']
-        port = value['port']
-        username = value['user']
-        password = value['password']
+    try:
+        # Use identity key if provided, otherwise use password
+        if identity_key:
+            ssh_client.connect(hostname, port, username, key_filename=identity_key)
+        else:
+            ssh_client.connect(hostname, port, username, password)
 
-        client[value['key']] = paramiko.SSHClient()
-        client[value['key']].set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        # Create an SFTP client
+        sftp_client = ssh_client.open_sftp()
 
-        client[value['key']].connect(ip, port, username, password)
+        # Transfer the file from local to remote
+        sftp_client.put(local_path, remote_path)
 
-        return client
+        # Close the SFTP client
+        sftp_client.close()
+
+    finally:
+        # Close the SSH client
+        ssh_client.close()
 
 
 def export_to_json(data, file_path):

@@ -1,21 +1,14 @@
 {
-    "Server1": {
-        "user" : "other",
-        "port": 22,
-        "ip": "",
-        "password": "",
-        "identity" : "path to identity files",
-        "commands" : {
-            "app_name" : "command"
-        },
-        "monitoring_processes" : {
-            "p1" : "Anydesk.exe",
-            "p2" :  "GHelper.exe"
-        },
-        "monitoring_services" : {
-            "s1" : "Anydesk",
-            "s2" :  "Parsec"
-        }
+    "commands" : {
+        "app_name" : "command"
+    },
+    "monitoring_processes" : {
+        "p1" : "Anydesk.exe",
+        "p2" :  "GHelper.exe"
+    },
+    "monitoring_services" : {
+        "s1" : "Anydesk",
+        "s2" :  "Parsec"
     },
     "polling_rate": 1
 }

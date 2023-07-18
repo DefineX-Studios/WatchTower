@@ -1,0 +1,9 @@
+{
+  "user": "allphis",
+  "port": 22,
+  "ip": "172.30.102.128",
+  "password": "password",
+  "identity": "",
+  "local_path" : "",
+  "remote_path" : "/home/allphis"
+}

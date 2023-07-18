@@ -61,7 +61,7 @@ def get_disk_usage():
     for i in range(0, len(disks), 3):
         if i != 0:
             disk[disks[i]] = ()
-            disk[disks[i]] = (disks[i + 1], disks[i - 1])
+            disk[disks[i]] = (((int(disks[i + 1]) / 1024) / 1024 / 1024).__round__(2), ((int(disks[i - 1]) / 1024) / 1024 / 1024).__round__(2))
 
     return disk
 
@@ -140,18 +140,21 @@ def list_processes():
 
 
 def get_service_status(service_name):
-    service_info = []
+    service_info = {}
     c = wmi.WMI()
     services = c.Win32_Service(Name=service_name)
 
     if services:
         for service in services:
-            service_info.append(service.Name)
-            service_info.append(service.PathName)
-            service_info.append(service.ProcessId)
-            service_info.append(service.StartMode)
-            service_info.append(service.State)
-            service_info.append(service.Status)
+            service_info = {
+                'Name': service.Name,
+                'PathName': service.PathName,
+                'ProcessId': service.ProcessId,
+                'StartMode' : service.StartMode,
+                'State': service.State,
+                'Status': service.Status
+            }
+
     else:
         error_message = f"Service not found ==> {service_name}"
         print(f"Command execution failed with error: {error_message}")

@@ -1,7 +1,7 @@
 import server
-import windows
 import mail
 import time
+import sys
 
 
 if __name__ == '__main__':
@@ -12,24 +12,35 @@ if __name__ == '__main__':
     dead_processes = ""
     dead_services = ""
 
+    if sys.platform.startswith('win'):
+        # Import modules for Windows
+        import windows as module
+    elif sys.platform.startswith('linux'):
+        # Import modules for Linux
+        import linux as module
+    else:
+        # Handle unsupported operating system
+        print("Unsupported operating system")
+        sys.exit(1)
+
     # Routine call
-    cpu_usage = windows.get_cpu_usage()
-    ram_usage = windows.get_ram_usage()
-    disk_usage = windows.get_disk_usage()
-    commands_list = windows.list_processes()
+    cpu_usage = module.get_cpu_usage()
+    ram_usage = module.get_ram_usage()
+    disk_usage = module.get_disk_usage()
+    commands_list = module.list_processes()
     server_json = server.read_from_json('server.json')
 
     for key, value in server_json.items():
         if key != "polling_rate":
             for key1, value1 in value['monitoring_processes'].items():
-                process_status[key1] = windows.get_process_info(value1)
+                process_status[key1] = module.get_process_info(value1)
                 if not process_status[key1]:
                     dead_processes += value1 + "\n"
             if dead_processes:
                 mail.send_mail(dead_processes, 'process')
 
             for key1, value1 in value['monitoring_services'].items():
-                service_status[key1] = windows.get_service_status(value1)
+                service_status[key1] = module.get_service_status(value1)
                 if not service_status[key1]:
                     dead_services += value1 + "\n"
             if dead_services:
@@ -45,7 +56,6 @@ if __name__ == '__main__':
 
     if disk_usage:
         for driver_letter, drive_info in disk_usage.items():
-            history[current_timestamp][driver_letter] = (
-                        (int(drive_info[1]) / 1024) / 1024 / 1024).__round__(2)
+            history[current_timestamp][driver_letter] = (drive_info[1])
 
     server.write_from_json(history, "history")

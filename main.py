@@ -70,7 +70,7 @@ if __name__ == '__main__':
         for driver_letter, drive_info in disk_usage.items():
             history[current_timestamp][driver_letter] = (drive_info[1])
 
-    history_file = socket.gethostname() + '-history'
+    history_file = socket.gethostname() + '-history.json'
     live_file = socket.gethostname() + '-live.json'
 
     server.write_from_json(history, history_file)
@@ -79,7 +79,7 @@ if __name__ == '__main__':
     # hostname, port, username, password, local_path, remote_path, identity_key=None
 
     server.ssh_transfer_files(ssh_config['ip'], ssh_config['port'], ssh_config['user'], ssh_config['password'],
-                              ssh_config['local_path'] + history_file + '.json', ssh_config['remote_path'] + '/' + history_file,
+                              ssh_config['local_path'] + history_file, ssh_config['remote_path'] + '/' + history_file,
                               ssh_config['identity'])
 
     server.ssh_transfer_files(ssh_config['ip'], ssh_config['port'], ssh_config['user'], ssh_config['password'],

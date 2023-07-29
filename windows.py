@@ -118,25 +118,26 @@ def get_gpu_usage():
     return all_gpus
 
 
-def list_processes():
-    columns = []
-    command = "tasklist"
-    output = []
-    result = subprocess.run(command, capture_output=True, text=True)
-    # split
-    output = result.stdout.split("\n")
-    # let's get rid of the first two lines as they are just header
-    output = output[4:]
-    process_dict = {}
+def list_processes(num_processes = 20):
+    c = wmi.WMI()
+    processes = c.Win32_Process()
 
-    # Iterate over the processes and store them in the dictionary
-    for process in output:
-        # Split the process information into individual columns
-        columns = process.split()
-        if columns:
-            process_dict[columns[1]] = (columns[0], columns[4])
+    # Sort the processes based on their WorkingSetSize (memory usage)
+    sorted_processes = sorted(processes, key=lambda x: x.WorkingSetSize, reverse=True)
 
-    return process_dict
+    # Get the top 'num_processes' processes
+    top_processes = sorted_processes[:num_processes]
+
+    # Create a dictionary with the specified format
+    result = {}
+    for process in top_processes:
+        process_info = {
+            "process_name": process.Name,
+            "memory_used": process.WorkingSetSize
+        }
+        result[process.ProcessId] = process_info
+
+    return result
 
 
 def get_service_status(service_name):

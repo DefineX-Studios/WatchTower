@@ -14,7 +14,6 @@ def read_from_json(json_name):
 
 def write_from_json(data, file_name):
 
-    file_name = f"{file_name}.json"
     file_path = os.path.dirname(os.path.abspath(__file__)) + "\\" + file_name
 
     if os.path.exists(file_path):
@@ -22,13 +21,13 @@ def write_from_json(data, file_name):
         with open(file_path, "r") as file:
             pre_history = json.load(file)
 
-        pre_history["history"].update(json.loads(json_data))
+        pre_history.update(json.loads(json_data))
 
         # Write the updated pre_history back to the file
         with open(file_path, "w") as file:
             json.dump(pre_history, file, indent=4)
     else:
-        initial_structure = {"history": data}
+        initial_structure = data
         json_data = json.dumps(initial_structure)
         with open(file_path, "w") as file:
             file.write(json_data)

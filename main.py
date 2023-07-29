@@ -38,6 +38,7 @@ if __name__ == '__main__':
     live_data.append(disk_usage)
     live_data.append(commands_list)
 
+
     if server_json['monitoring_processes']:
         for key1, value1 in server_json['monitoring_processes'].items():
             process_status[key1] = module.get_process_info(value1)

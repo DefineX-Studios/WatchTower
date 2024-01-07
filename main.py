@@ -4,7 +4,6 @@ import time
 import sys
 import socket
 
-
 if __name__ == '__main__':
     current_timestamp = int(time.time())
     service_status = {}
@@ -37,7 +36,6 @@ if __name__ == '__main__':
     live_data.append(ram_usage)
     live_data.append(disk_usage)
     live_data.append(commands_list)
-
 
     if server_json['monitoring_processes']:
         for key1, value1 in server_json['monitoring_processes'].items():
@@ -74,7 +72,7 @@ if __name__ == '__main__':
     history_file = socket.gethostname() + '-history.json'
     live_file = socket.gethostname() + '-live.json'
 
-    server.write_from_json(history, history_file)
+    server.write_from_json(history, history_file, server_json["max_data_history"])
     server.export_to_json(live_data, live_file)
 
     # hostname, port, username, password, local_path, remote_path, identity_key=None
@@ -86,4 +84,3 @@ if __name__ == '__main__':
     server.ssh_transfer_files(ssh_config['ip'], ssh_config['port'], ssh_config['user'], ssh_config['password'],
                               ssh_config['local_path'] + live_file, ssh_config['remote_path'] + '/' + live_file,
                               ssh_config['identity'])
-

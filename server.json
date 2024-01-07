@@ -3,12 +3,9 @@
         "app_name" : "command"
     },
     "monitoring_processes" : {
-        "p1" : "Anydesk.exe",
-        "p2" :  "GHelper.exe"
     },
     "monitoring_services" : {
-        "s1" : "Anydesk",
-        "s2" :  "Parsec"
     },
-    "polling_rate": 1
+    "polling_rate": 1,
+    "max_data_history" : 50
 }

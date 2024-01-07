@@ -1,7 +1,6 @@
 import json
 import paramiko
 import os
-import logging
 
 
 def read_from_json(json_name):
@@ -12,8 +11,7 @@ def read_from_json(json_name):
     return data
 
 
-def write_from_json(data, file_name):
-
+def write_from_json(data, file_name, max_limit):
     file_path = os.path.dirname(os.path.abspath(__file__)) + "\\" + file_name
 
     if os.path.exists(file_path):
@@ -22,6 +20,10 @@ def write_from_json(data, file_name):
             pre_history = json.load(file)
 
         pre_history.update(json.loads(json_data))
+
+        if len(pre_history) > max_limit:
+            all_keys = list(pre_history.keys())
+            del pre_history[all_keys[0]]
 
         # Write the updated pre_history back to the file
         with open(file_path, "w") as file:

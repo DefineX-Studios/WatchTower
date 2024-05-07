@@ -3,6 +3,7 @@ import mail
 import time
 import sys
 import socket
+import json
 
 if __name__ == '__main__':
     current_timestamp = int(time.time())
@@ -75,12 +76,20 @@ if __name__ == '__main__':
     server.write_from_json(history, history_file, server_json["max_data_history"])
     server.export_to_json(live_data, live_file)
 
-    # hostname, port, username, password, local_path, remote_path, identity_key=None
+    # Open the feature_config JSON file
+    
+    with open("feature_config.json", "r") as file:
+        #Load the JSON data 
+        feature_data = json.load(file)
 
-    server.ssh_transfer_files(ssh_config['ip'], ssh_config['port'], ssh_config['user'], ssh_config['password'],
-                              ssh_config['local_path'] + history_file, ssh_config['remote_path'] + '/' + history_file,
-                              ssh_config['identity'])
+    # Checking if the ssh feature flag is enabled
+    if feature_data['ssh']:
 
-    server.ssh_transfer_files(ssh_config['ip'], ssh_config['port'], ssh_config['user'], ssh_config['password'],
-                              ssh_config['local_path'] + live_file, ssh_config['remote_path'] + '/' + live_file,
-                              ssh_config['identity'])
+        # hostname, port, username, password, local_path, remote_path, identity_key=None
+        server.ssh_transfer_files(ssh_config['ip'], ssh_config['port'], ssh_config['user'], ssh_config['password'],
+                                ssh_config['local_path'] + history_file, ssh_config['remote_path'] + '/' + history_file,
+                                ssh_config['identity'])
+
+        server.ssh_transfer_files(ssh_config['ip'], ssh_config['port'], ssh_config['user'], ssh_config['password'],
+                                ssh_config['local_path'] + live_file, ssh_config['remote_path'] + '/' + live_file,
+                                ssh_config['identity'])

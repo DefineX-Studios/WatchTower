@@ -8,6 +8,11 @@ with open('mail_config.json', 'r') as file:
     # Load the JSON data
     mail_data = json.load(file)
 
+# Open the feature_config JSON file
+with open("feature_config.json", "r") as file:
+    # Load the feature_config JSON file data
+    feature_data = json.load(file)
+
 with open('mail_templates.json', 'r') as file:
     # Load the JSON data
     mail_lang = json.load(file)
@@ -25,7 +30,7 @@ smtp_password = mail_data['smtp_password']
 
 def send_mail(name='', call_type=''):
 
-    if not mail_data:
+    if feature_data["mail"] is False:
         return ()
 
     if name:

@@ -3,9 +3,15 @@ import mail
 import time
 import sys
 import socket
-import json
+
+
+def show_progress(message):
+    print("[INFO] " + message)
+
 
 if __name__ == '__main__':
+    show_progress("Starting script...")
+
     current_timestamp = int(time.time())
     service_status = {}
     history = {}
@@ -25,19 +31,19 @@ if __name__ == '__main__':
         print("Unsupported operating system")
         sys.exit(1)
 
-    # Routine call
+    show_progress("Gathering system information...")
     cpu_usage = module.get_cpu_usage()
     ram_usage = module.get_ram_usage()
     disk_usage = module.get_disk_usage()
     commands_list = module.list_processes()
     server_json = server.read_from_json('server.json')
-    ssh_config = server.read_from_json('ssh_config.json')
 
     live_data.append(cpu_usage)
     live_data.append(ram_usage)
     live_data.append(disk_usage)
     live_data.append(commands_list)
 
+    show_progress("Checking monitored processes...")
     if server_json['monitoring_processes']:
         for key1, value1 in server_json['monitoring_processes'].items():
             process_status[key1] = module.get_process_info(value1)
@@ -48,6 +54,7 @@ if __name__ == '__main__':
             if dead_processes:
                 mail.send_mail(dead_processes, 'process')
 
+    show_progress("Checking monitored services...")
     if server_json['monitoring_services']:
         for key1, value1 in server_json['monitoring_services'].items():
             service_status[key1] = module.get_service_status(value1)
@@ -58,6 +65,7 @@ if __name__ == '__main__':
         if dead_services:
             mail.send_mail(dead_services, 'service')
 
+    show_progress("Saving system history...")
     history = {current_timestamp: {}}
 
     if cpu_usage:
@@ -76,20 +84,7 @@ if __name__ == '__main__':
     server.write_from_json(history, history_file, server_json["max_data_history"])
     server.export_to_json(live_data, live_file)
 
-    # Open the feature_config JSON file
-    
-    with open("feature_config.json", "r") as file:
-        #Load the JSON data 
-        feature_data = json.load(file)
-
-    # Checking if the ssh feature flag is enabled
-    if feature_data['ssh']:
-
-        # hostname, port, username, password, local_path, remote_path, identity_key=None
-        server.ssh_transfer_files(ssh_config['ip'], ssh_config['port'], ssh_config['user'], ssh_config['password'],
-                                ssh_config['local_path'] + history_file, ssh_config['remote_path'] + '/' + history_file,
-                                ssh_config['identity'])
-
-        server.ssh_transfer_files(ssh_config['ip'], ssh_config['port'], ssh_config['user'], ssh_config['password'],
-                                ssh_config['local_path'] + live_file, ssh_config['remote_path'] + '/' + live_file,
-                                ssh_config['identity'])
+    show_progress("Transferring files via SSH...")
+    server.ssh_transfer_files(history_file, history_file)
+    server.ssh_transfer_files(live_file, live_file)
+    print(fr'[END] Script completed successfully.')

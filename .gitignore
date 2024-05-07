@@ -4,3 +4,5 @@ __pycache__/
 server.json
 mail_config.json
 ssh_config.json
+*-history.json
+*-live.json

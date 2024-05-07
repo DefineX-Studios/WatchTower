@@ -11,6 +11,8 @@ def read_from_json(json_name):
     return data
 
 
+feature_data = read_from_json('feature_config.json')
+
 def write_from_json(data, file_name, max_limit):
     file_path = os.path.dirname(os.path.abspath(__file__)) + "\\" + file_name
 
@@ -35,23 +37,29 @@ def write_from_json(data, file_name, max_limit):
             file.write(json_data)
 
 
-def ssh_transfer_files(hostname, port, username, password, local_path, remote_path, identity_key=None):
+def ssh_transfer_files(local_path, remote_path):
+
+    if not feature_data['ssh']:
+        return ()
+
+    ssh_config = read_from_json('ssh_config.json')
+
     # Create an SSH client
     ssh_client = paramiko.SSHClient()
     ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 
     try:
         # Use identity key if provided, otherwise use password
-        if identity_key:
-            ssh_client.connect(hostname, port, username, key_filename=identity_key)
+        if ssh_config['identity_key']:
+            ssh_client.connect(ssh_config['hostname'], ssh_config['port'], ssh_config['username'], key_filename= ssh_config['identity_key'])
         else:
-            ssh_client.connect(hostname, port, username, password)
+            ssh_client.connect(ssh_config['hostname'], ssh_config['port'], ssh_config['username'], ssh_config['password'])
 
         # Create an SFTP client
         sftp_client = ssh_client.open_sftp()
 
         # Transfer the file from local to remote
-        sftp_client.put(local_path, remote_path)
+        sftp_client.put(ssh_config['local_path'] + local_path, ssh_config['remote_path'] + '/' + remote_path)
 
         # Close the SFTP client
         sftp_client.close()

@@ -14,8 +14,8 @@ def read_from_json(json_name):
 feature_data = read_from_json('feature_config.json')
 
 def write_from_json(data, file_name, max_limit):
-    file_path = os.path.dirname(os.path.abspath(__file__)) + "\\" + file_name
-
+    file_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), file_name)
+    
     if os.path.exists(file_path):
         json_data = json.dumps(data)
         with open(file_path, "r") as file:

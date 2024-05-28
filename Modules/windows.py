@@ -1,6 +1,6 @@
 import subprocess
 import wmi
-import server
+
 
 def get_cpu_usage():
     cpu_info = {}
@@ -42,7 +42,7 @@ def get_ram_usage():
 
     if total and free:
         memory["used"] = (memory["total"] - memory["free"])
-        memory["percent"] = ((memory["used"] / memory["total"])*100).__round__()
+        memory["percent"] = ((memory["used"] / memory["total"]) * 100).__round__()
     else:
         error_message = 'Cannot calculate memory size'
         print(f"Command execution failed with error in the function :{__name__} {error_message}")
@@ -61,7 +61,8 @@ def get_disk_usage():
     for i in range(0, len(disks), 3):
         if i != 0:
             disk[disks[i]] = ()
-            disk[disks[i]] = (((int(disks[i + 1]) / 1024) / 1024 / 1024).__round__(2), ((int(disks[i - 1]) / 1024) / 1024 / 1024).__round__(2))
+            disk[disks[i]] = (((int(disks[i + 1]) / 1024) / 1024 / 1024).__round__(2),
+                              ((int(disks[i - 1]) / 1024) / 1024 / 1024).__round__(2))
 
     return disk
 
@@ -118,7 +119,7 @@ def get_gpu_usage():
     return all_gpus
 
 
-def list_processes(num_processes = 20):
+def list_processes(num_processes=20):
     c = wmi.WMI()
     processes = c.Win32_Process()
 
@@ -153,7 +154,7 @@ def get_service_status(service_name):
                     'Name': service.Name,
                     'PathName': service.PathName,
                     'ProcessId': service.ProcessId,
-                    'StartMode' : service.StartMode,
+                    'StartMode': service.StartMode,
                     'State': service.State,
                     'Status': service.Status
                 }

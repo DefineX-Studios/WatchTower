@@ -1,13 +1,13 @@
 import schedule
 import time
 import subprocess
-import server
+from Modules import server
 
-server = server.read_from_json('server.json')
+server = server.read_from_json('/Configs/server.json')
 
 
 def run_main_script():
-    command = ['python', 'main.py']
+    command = ['python', './Modules/main.py']
     subprocess.run(command)
 
 

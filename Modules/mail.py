@@ -2,18 +2,19 @@ import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 import json
+import os
 
 # Open the JSON file
-with open('mail_config.json', 'r') as file:
+with open(os.getcwd() + '/Configs/mail_config.json', 'r') as file:
     # Load the JSON data
     mail_data = json.load(file)
 
 # Open the feature_config JSON file
-with open("feature_config.json", "r") as file:
+with open(os.getcwd() + '/Configs/feature_config.json', "r") as file:
     # Load the feature_config JSON file data
     feature_data = json.load(file)
 
-with open('mail_templates.json', 'r') as file:
+with open(os.getcwd() + '/Configs/mail_templates.json', 'r') as file:
     # Load the JSON data
     mail_lang = json.load(file)
 

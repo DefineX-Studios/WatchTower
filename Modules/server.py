@@ -1,17 +1,33 @@
 import json
 import paramiko
 import os
+import tempfile
+import datetime
+
+
+def logger(message):
+    temp_dir = tempfile.gettempdir()
+    log_file = 'logfile.log'
+    log_path = os.path.join(temp_dir, log_file)
+
+    timestamp = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    log_message = f'[{timestamp}] {message}\n'
+
+    with open(log_path, 'a') as f:
+        f.write(log_message)
 
 
 def read_from_json(json_name):
     # Open the JSON file
-    with open(json_name, 'r') as file:
+    
+    with open(os.getcwd() + json_name, 'r') as file:
         # Load the JSON data
         data = json.load(file)
     return data
 
 
-feature_data = read_from_json('feature_config.json')
+feature_data = read_from_json('/Configs/feature_config.json')
+
 
 def write_from_json(data, file_name, max_limit):
     file_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), file_name)
@@ -42,7 +58,7 @@ def ssh_transfer_files(local_path, remote_path):
     if not feature_data['ssh']:
         return ()
 
-    ssh_config = read_from_json('ssh_config.json')
+    ssh_config = read_from_json('/Configs/ssh_config.json')
 
     # Create an SSH client
     ssh_client = paramiko.SSHClient()

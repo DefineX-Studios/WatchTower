@@ -1,8 +1,8 @@
 .idea/
 .vscode/
 __pycache__/
-server.json
-mail_config.json
-ssh_config.json
+Configs/server.json
+Configs/mail_config.json
+Configs/ssh_config.json
 *-history.json
 *-live.json

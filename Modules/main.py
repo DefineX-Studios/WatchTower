@@ -1,8 +1,8 @@
-import server
-import mail
 import time
 import sys
 import socket
+import server
+import mail
 
 
 def show_progress(message):
@@ -36,7 +36,7 @@ if __name__ == '__main__':
     ram_usage = module.get_ram_usage()
     disk_usage = module.get_disk_usage()
     commands_list = module.list_processes()
-    server_json = server.read_from_json('server.json')
+    server_json = server.read_from_json('/Configs/server.json')
 
     live_data.append(cpu_usage)
     live_data.append(ram_usage)

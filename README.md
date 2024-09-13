@@ -65,7 +65,8 @@ The `server.json` file contains the server configuration details. Please provide
     "s1": "s1_name",
     "s2": "s2_name"
   },
-  "polling_rate": 1
+  "polling_rate": 1,
+  "max_data_history": 30
 }
 ```
 

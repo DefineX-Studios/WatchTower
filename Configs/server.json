@@ -1,0 +1,15 @@
+{
+    "commands": {
+      "app_name": "command"
+    },
+    "monitoring_processes": {
+      "p1": "p1.exe",
+      "p2": "p2.exe"
+    },
+    "monitoring_services": {
+      "s1": "s1_name",
+      "s2": "s2_name"
+    },
+    "polling_rate": 1,
+    "max_data_history" : 30
+}

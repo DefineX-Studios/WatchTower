@@ -1,0 +1,9 @@
+{
+    "user": "",
+    "port": 22,
+    "ip": "ip_address",
+    "password": "password",
+    "identity": "identity_file",
+    "local_path": "local_path",
+    "remote_path": "remote_path"
+}

@@ -1,5 +1,6 @@
 {
     "mail" : false,
-    "ssh" : false
+    "ssh" : false,
+    "log" : false
 
 }

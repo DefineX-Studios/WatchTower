@@ -11,7 +11,7 @@ def run_main_script():
     subprocess.run(command)
 
 
-print(fr'[START] Time: {time.strftime("%H:%M:%S")}.')
+print(fr'[START] Time: {time.strftime("%a - %d %b %Y %H:%M:%S")}.')
 print(fr'[INFO] Script is schedule to run every {server["polling_rate"]} minutes')
 schedule.every(server["polling_rate"]).minutes.do(run_main_script)
 

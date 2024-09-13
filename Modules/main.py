@@ -4,14 +4,15 @@ import socket
 import server
 import mail
 
+feature_data = server.read_from_json('/Configs/feature_config.json')
 
-def show_progress(message):
-    print("[INFO] " + message)
+def show_progress(message, custom = "[INFO]"):
+    if feature_data['log']:
+        print(custom + message)
 
 
 if __name__ == '__main__':
     show_progress("Starting script...")
-
     current_timestamp = int(time.time())
     service_status = {}
     history = {}
@@ -87,4 +88,5 @@ if __name__ == '__main__':
     show_progress("Transferring files via SSH...")
     server.ssh_transfer_files(history_file, history_file)
     server.ssh_transfer_files(live_file, live_file)
-    print(fr'[END] Script completed successfully.')
+    show_progress("Saving system history...")
+    show_progress("Script completed successfully.", "[END]")

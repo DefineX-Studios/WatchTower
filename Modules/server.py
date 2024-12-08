@@ -17,21 +17,22 @@ def logger(message):
         f.write(log_message)
 
 
-def read_from_json(json_name):
+def read_from_json(json_name, modules=False):
     # Open the JSON file
-    
-    with open(os.getcwd() + json_name, 'r') as file:
+    path = os.getcwd()
+
+    if modules:
+        path = os.path.abspath(os.path.join(path, ".."))
+
+    with open(path + json_name, 'r') as file:
         # Load the JSON data
         data = json.load(file)
     return data
 
 
-feature_data = read_from_json('/Configs/feature_config.json')
-
-
 def write_from_json(data, file_name, max_limit):
     file_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), file_name)
-    
+
     if os.path.exists(file_path):
         json_data = json.dumps(data)
         with open(file_path, "r") as file:
@@ -54,7 +55,6 @@ def write_from_json(data, file_name, max_limit):
 
 
 def ssh_transfer_files(local_path, remote_path):
-
     if not feature_data['ssh']:
         return ()
 
@@ -67,9 +67,11 @@ def ssh_transfer_files(local_path, remote_path):
     try:
         # Use identity key if provided, otherwise use password
         if ssh_config['identity_key']:
-            ssh_client.connect(ssh_config['hostname'], ssh_config['port'], ssh_config['username'], key_filename= ssh_config['identity_key'])
+            ssh_client.connect(ssh_config['hostname'], ssh_config['port'], ssh_config['username'],
+                               key_filename=ssh_config['identity_key'])
         else:
-            ssh_client.connect(ssh_config['hostname'], ssh_config['port'], ssh_config['username'], ssh_config['password'])
+            ssh_client.connect(ssh_config['hostname'], ssh_config['port'], ssh_config['username'],
+                               ssh_config['password'])
 
         # Create an SFTP client
         sftp_client = ssh_client.open_sftp()
@@ -90,3 +92,42 @@ def export_to_json(data, file_path):
     with open(file_path, 'w') as file:
         # Export the data to JSON format
         json.dump(data, file, indent=4)
+
+
+"""
+Monitor if a website is up and measure its response time.
+:param url: The URL of the website to monitor.
+:param timeout: Maximum time to wait for a response (in seconds).
+:return: A tuple (status, response_time) where:
+         - status: 'UP' if the website is reachable, otherwise 'DOWN'
+         - response_time: Response time in milliseconds (None if site is down)
+"""
+
+
+def monitor_website(url, timeout=5):
+    import time
+    import requests
+
+    try:
+        start_time = time.time()
+        response = requests.get(url, timeout=timeout)
+        response_time = (time.time() - start_time) * 1000
+
+        if response.status_code == 200:
+            return "UP", round(response_time, 2)
+        else:
+            return "DOWN", None
+    except requests.exceptions.RequestException:
+        return "DOWN", None
+
+
+def websites_status():
+
+    status = {}
+    for website in server_data['websites']:
+        status[server_data['websites'][website]] = monitor_website(server_data['websites'][website])
+        export_to_json(status, 'website_status.json')
+
+
+feature_data = read_from_json('/WatchTower/Configs/feature_config.json', True)
+server_data = read_from_json('/WatchTower/Configs/server.json', True)

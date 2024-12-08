@@ -1,3 +1,4 @@
+import json
 import time
 import sys
 import socket
@@ -6,7 +7,8 @@ import mail
 
 feature_data = server.read_from_json('/Configs/feature_config.json')
 
-def show_progress(message, custom = "[INFO]"):
+
+def show_progress(message, custom="[INFO]"):
     if feature_data['log']:
         print(custom + message)
 
@@ -37,8 +39,10 @@ if __name__ == '__main__':
     ram_usage = module.get_ram_usage()
     disk_usage = module.get_disk_usage()
     commands_list = module.list_processes()
+    temp_stats = module.get_temp_data()
+    fan_stats = module.get_fan_speed()
+    wattage_stat = module.get_wattage()
     server_json = server.read_from_json('/Configs/server.json')
-
     live_data.append(cpu_usage)
     live_data.append(ram_usage)
     live_data.append(disk_usage)
@@ -79,8 +83,17 @@ if __name__ == '__main__':
         for driver_letter, drive_info in disk_usage.items():
             history[current_timestamp][driver_letter] = (drive_info[1])
 
+    if fan_stats:
+        history[current_timestamp]['fan'] = fan_stats
+
+    if temp_stats:
+        history[current_timestamp]['temp'] = temp_stats
+
+    if wattage_stat:
+        history[current_timestamp]['watts'] = wattage_stat
+
     history_file = socket.gethostname() + '-history.json'
-    live_file = socket.gethostname() + '-live.json'
+    live_file = socket.gethostname() + '-current.json'
 
     server.write_from_json(history, history_file, server_json["max_data_history"])
     server.export_to_json(live_data, live_file)
@@ -89,4 +102,7 @@ if __name__ == '__main__':
     server.ssh_transfer_files(history_file, history_file)
     server.ssh_transfer_files(live_file, live_file)
     show_progress("Saving system history...")
+
+    server.websites_status()
+
     show_progress("Script completed successfully.", "[END]")

@@ -1,4 +1,5 @@
 paramiko~=3.4.0
 WMI~=1.5.1
 schedule~=1.2.1
-psutil-6.0.0
+psutil~=6.0.0
+requests~=2.32.3

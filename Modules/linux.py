@@ -1,5 +1,6 @@
 import subprocess
 import psutil
+import re
 
 
 def get_cpu_usage():
@@ -57,7 +58,6 @@ def list_processes():
 
 
 def get_service_status(service_name=''):
-
     if service_name:
         # Run the command and capture its output
         command = f'systemctl --type=service --state=running | grep {service_name}'
@@ -103,3 +103,70 @@ def get_process_info(process_name):
         error_message = "No Process name set."
         print(f"Command execution failed with error: {error_message}")
 
+
+"""
+Fetch and process sensor data based on the grep pattern provided.
+:param grep_pattern: The grep pattern to filter sensor data (e.g., 'RPM', '°C', 'W')
+:return: A list of processed sensor data in the format 'Component: Value'
+"""
+
+
+def get_sensor_data(grep_pattern):
+    sensors_output = []
+    try:
+        sensors_output = subprocess.run(f'sensors | grep {grep_pattern}', capture_output=True, shell=True,
+                                        check=True).stdout
+    except subprocess.CalledProcessError as e:
+        print(f"Error running sensors command: {e}")
+        return []
+
+    decoded_data = sensors_output.decode('utf-8')
+
+    array = [line.strip() for line in decoded_data.split('\n') if line.strip()]
+
+    result = {}
+    for entry in array:
+        # Skip entries that start with '('
+        if entry.strip().startswith('('):
+            continue
+        # Remove parentheses content
+        cleaned_entry = re.sub(r'\(.*?\)', '', entry).strip()
+        # Split into component name and value
+        if ':' in cleaned_entry:
+            component, value = map(str.strip, cleaned_entry.split(':', 1))
+            # Extract numeric value, remove '+' if present
+            number = re.search(r'[-+]?\d*\.\d+|\d+', value).group().lstrip('+')
+            result[component] = number
+
+    return result
+
+
+"""
+Get fan speed data.
+:return: List of fan speed data
+"""
+
+
+def get_fan_speed():
+    return get_sensor_data('RPM')
+
+
+"""
+Get temperature data.
+:return: List of temperature data
+"""
+
+
+def get_temp_data():
+
+    return get_sensor_data('°C')
+
+
+"""
+Get power wattage data.
+:return: List of wattage data
+"""
+
+
+def get_wattage():
+    return get_sensor_data('W')
